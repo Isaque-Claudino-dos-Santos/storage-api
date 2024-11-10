@@ -1,4 +1,4 @@
-import HttpServer from './App/Server/HttpServer.js'
+import HttpServer from './Kernel/Server/HttpServer.js'
 
 const httpServer = new HttpServer()
 

@@ -1,12 +1,12 @@
-import express, { Express } from 'express'
-import Env from '../../constants/Env.js'
-import router from '../../App/routes.js'
-import ServerConfig from './ServerConfig.js'
 import { log } from 'console'
+import express, { Express } from 'express'
+import router from '../../App/routes.js'
+import Env from '../../constants/Env.js'
+import ServerConfig from './ServerConfig.js'
 
 export default class HttpServer {
     private readonly app: Express = express()
-    private readonly config: ServerConfig = new ServerConfig();
+    private readonly config: ServerConfig = new ServerConfig()
 
     start() {
         this.app.use(router)

@@ -5,4 +5,4 @@ const router = Router()
 
 router.get('/users/', UserController.index)
 
-export default router;
+export default router

@@ -3,3 +3,16 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+    id Int @id
+    firstName String
+    LastName String
+    email String
+    password String
+    
+    @@map("users")
+}

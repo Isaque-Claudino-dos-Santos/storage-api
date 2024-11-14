@@ -1,9 +1,8 @@
-import { Router } from 'express'
 import userRouter from './api/users/user-router.js'
-import HttpServer from './Kernel/Server/HttpServer.js'
+import Application from './Kernel/Application/index.js'
 
-const httpServer = new HttpServer()
+export const app = new Application()
 
-const routers: Router[] = [userRouter]
+app.withRouters(userRouter)
 
-httpServer.start(routers)
+app.initialize()

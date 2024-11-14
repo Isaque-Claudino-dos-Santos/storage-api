@@ -1,9 +1,8 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+import prisma from '../../../helpers/prisma.js'
 import UsersPaginationQueryDTO from '../DTOs/UsersPaginationDTO.js'
 
 export default class UsersPaginationService {
-    constructor(private readonly prisma: PrismaClient) {}
-
     private getUserWhereInput(query: UsersPaginationQueryDTO) {
         const { userIds } = query
         const where: Prisma.UserWhereInput = {}
@@ -16,7 +15,7 @@ export default class UsersPaginationService {
     }
 
     public async paginate(query: UsersPaginationQueryDTO) {
-        const users = await this.prisma.user.findMany({
+        const users = await prisma().user.findMany({
             select: { id: true, firstName: true, lastName: true, email: true },
             where: this.getUserWhereInput(query),
             orderBy: query.orderBy,

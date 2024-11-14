@@ -1,21 +1,19 @@
-import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
+import UserRepository from '../Repositories/UserRepository.js'
 import CreateUserDTO from './DTOs/CreateUserDTO.js'
 import UsersPaginationDTO from './DTOs/UsersPaginationDTO.js'
 import UsersPaginationService from './Services/UsersPaginationService.js'
-import UserRepository from './UserRepository.js'
 import CreateUserValidations from './Validations/CreateUserValidations.js'
 import UsersPaginationValidations from './Validations/UsersPaginationValidations.js'
 
 export default class UserController {
-    prisma = new PrismaClient()
-    userRepository = new UserRepository(this.prisma)
+    userRepository = new UserRepository()
 
     getUsersPagination = async (request: Request, response: Response) => {
         await new UsersPaginationValidations().validate(request)
         const query = new UsersPaginationDTO(request)
-        const service = new UsersPaginationService(this.prisma)
+        const service = new UsersPaginationService()
         const pagination = await service.paginate(query)
 
         response.json({

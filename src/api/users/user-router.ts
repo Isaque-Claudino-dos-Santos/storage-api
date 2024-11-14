@@ -1,13 +1,13 @@
 import { Router } from 'express'
-import UserController from './UserController.js'
 import { param } from 'express-validator'
+import UserController from './UserController.js'
 
 const userRouter = Router()
 const userController = new UserController()
 
-userRouter.get('/users', userController.getUsersPagination)
-userRouter.get('/users/:id', param('id').toInt(), userController.getUserById)
-userRouter.post('/users', userController.createUser)
-
+userRouter
+    .get('/users', userController.getUsersPagination)
+    .get('/users/:id', param('id').toInt(), userController.getUserById)
+    .post('/users', userController.createUser)
 
 export default userRouter

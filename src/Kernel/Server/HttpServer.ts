@@ -8,6 +8,8 @@ export default class HttpServer {
     private readonly config: ServerConfig = new ServerConfig()
 
     start(routers: Router[]) {
+        this.app.use(express.json())
+
         routers.forEach((router) => this.app.use(router))
 
         this.app.listen(Env.SERVER_PORT, Env.SERVER_HOST, () => {

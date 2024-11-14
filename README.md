@@ -14,5 +14,6 @@ npm test
 
 - Typescript (Dev)
 - Express (Dev)
+- Express-Validator (Dev)
 - Prisma (Dev)
 - Jest (Test)

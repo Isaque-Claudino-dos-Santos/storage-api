@@ -10,7 +10,7 @@ export default class CreateUserDTO extends BaseDTO {
     constructor(request: Request) {
         super(request)
 
-        const { body } = request.body
+        const { body } = request
 
         this.firstName = body.firstName
         this.lastName = body.lastName

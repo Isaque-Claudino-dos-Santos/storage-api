@@ -9,7 +9,6 @@ export default class Application {
     public readonly server: BaseServer = new HttpServer()
     public readonly prisma: PrismaClient = new PrismaClient()
 
-    constructor() {}
 
     withRouters(...routers: Router[]): this {
         this.server.setRouters(routers)

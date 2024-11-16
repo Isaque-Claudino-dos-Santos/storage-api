@@ -9,5 +9,6 @@ userRouter
     .get('/users', userController.getUsersPagination)
     .get('/users/:id', param('id').toInt(), userController.getUserById)
     .post('/users', userController.createUser)
-
+    .put('/users/:id',param('id').toInt(),userController.updateUser)
+    
 export default userRouter

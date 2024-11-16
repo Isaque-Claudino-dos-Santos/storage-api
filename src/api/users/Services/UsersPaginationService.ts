@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
-import prisma from '../../../helpers/prisma.js'
 import UsersPaginationQueryDTO from '../DTOs/UsersPaginationDTO.js'
+import { app } from '../../../index.js'
 
 export default class UsersPaginationService {
     private getUserWhereInput(query: UsersPaginationQueryDTO) {
@@ -15,7 +15,7 @@ export default class UsersPaginationService {
     }
 
     public async paginate(query: UsersPaginationQueryDTO) {
-        const users = await prisma().user.findMany({
+        const users = app.prisma.user.findMany({
             select: { id: true, firstName: true, lastName: true, email: true },
             where: this.getUserWhereInput(query),
             orderBy: query.orderBy,

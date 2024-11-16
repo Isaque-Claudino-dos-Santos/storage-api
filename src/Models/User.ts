@@ -1,9 +1,10 @@
-import { Prisma } from '@prisma/client'
-import prisma from '../../helpers/prisma.js'
+import { Prisma, PrismaClient } from '@prisma/client'
 
-export default class UserRepository {
+export default class User {
+    public readonly prismaUser: PrismaClient['user'] = new PrismaClient().user
+
     async findById(id: number) {
-        return prisma().user.findUnique({
+        return this.prismaUser.findUnique({
             select: {
                 id: true,
                 firstName: true,
@@ -15,7 +16,7 @@ export default class UserRepository {
     }
 
     async create(data: Prisma.UserCreateInput) {
-        return await prisma().user.create({
+        return await this.prismaUser.create({
             select: {
                 id: true,
                 firstName: true,

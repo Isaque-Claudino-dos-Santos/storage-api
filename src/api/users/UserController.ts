@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import User from '../../Models/User.js'
-import CreateUserDTO from './DTOs/CreateUserDTO.js'
-import UpdateUserDTO from './DTOs/UpdateUserDTO.js'
-import UsersPaginationDTO from './DTOs/UsersPaginationDTO.js'
-import UsersPaginationService from './Services/UsersPaginationService.js'
-import CreateUserValidations from './Validations/CreateUserValidations.js'
-import UpdateUserValidations from './Validations/UpdateUserValidations.js'
-import UsersPaginationValidations from './Validations/UsersPaginationValidations.js'
+import User from '../../Models/User'
+import CreateUserDTO from './DTOs/CreateUserDTO'
+import UpdateUserDTO from './DTOs/UpdateUserDTO'
+import UsersPaginationDTO from './DTOs/UsersPaginationDTO'
+import UsersPaginationService from './Services/UsersPaginationService'
+import CreateUserValidations from './Validations/CreateUserValidations'
+import UpdateUserValidations from './Validations/UpdateUserValidations'
+import UsersPaginationValidations from './Validations/UsersPaginationValidations'
 
 export default class UserController {
     private readonly user = new User()
@@ -20,7 +20,8 @@ export default class UserController {
 
         response.json({
             success: true,
-            data: pagination,
+            data: pagination[0],
+            pagination: pagination[1],
         })
     }
 

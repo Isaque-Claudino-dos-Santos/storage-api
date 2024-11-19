@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import { Router } from 'express'
-import BaseServer from '../Server/Bases/BaseServer.js'
-import HttpServer from '../Server/HttpServer.js'
-import ApplicationConfig from './ApplicationConfig.js'
+import BaseServer from '../Server/Bases/BaseServer'
+import HttpServer from '../Server/HttpServer'
+import ApplicationConfig from './ApplicationConfig'
 
 export default class Application {
     public readonly config: ApplicationConfig = new ApplicationConfig()

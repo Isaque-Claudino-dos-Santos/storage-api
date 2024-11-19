@@ -5,7 +5,7 @@ import {
     ValidationError,
     validationResult,
 } from 'express-validator'
-import BaseValidations from '../../Bases/BaseValidations.js'
+import BaseValidations from '../../Bases/BaseValidations'
 
 export default class UpdateUserValidations extends BaseValidations {
     public async validate(request: Request): Promise<Result<ValidationError>> {

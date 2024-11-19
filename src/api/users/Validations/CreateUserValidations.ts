@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { body, validationResult } from 'express-validator'
-import BaseValidations from '../../Bases/BaseValidations.js'
+import BaseValidations from '../../Bases/BaseValidations'
 
 export default class CreateUserValidations extends BaseValidations {
     async validate(request: Request) {

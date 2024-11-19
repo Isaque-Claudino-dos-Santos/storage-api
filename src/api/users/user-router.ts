@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { param } from 'express-validator'
-import UserController from './UserController.js'
+import UserController from './UserController'
 
 const userRouter = Router()
 const userController = new UserController()

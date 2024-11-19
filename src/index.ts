@@ -1,5 +1,5 @@
-import userRouter from './api/users/user-router.js'
-import Application from './Kernel/Application/index.js'
+import userRouter from './api/users/user-router'
+import Application from './Kernel/Application/index'
 
 export const app = new Application()
 

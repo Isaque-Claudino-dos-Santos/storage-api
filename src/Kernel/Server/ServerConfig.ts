@@ -1,4 +1,4 @@
-import Env from '../../constants/Env.js'
+import Env from '../../constants/Env'
 
 export default class ServerConfig {
     readonly protocol: string = Env.SERVER_PROTOCOL

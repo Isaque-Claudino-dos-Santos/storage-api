@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import BaseDTO from '../../Bases/BaseDTO.js'
+import BaseDTO from '../../Bases/BaseDTO'
 
 export default class UpdateUserDTO extends BaseDTO {
     public readonly firstName?: string

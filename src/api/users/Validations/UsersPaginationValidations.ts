@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { query, validationResult } from 'express-validator'
-import BaseValidations from '../../Bases/BaseValidations.js'
+import BaseValidations from '../../Bases/BaseValidations'
 
 export default class UsersPaginationValidations extends BaseValidations {
     async validate(request: Request) {
@@ -19,6 +19,8 @@ export default class UsersPaginationValidations extends BaseValidations {
             .run(request)
 
         await query('order_by_column').default('id').run(request)
+
+        await query('page').toInt().default(1).run(request)
 
         return validationResult(request)
     }

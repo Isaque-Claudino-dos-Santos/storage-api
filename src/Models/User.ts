@@ -1,5 +1,5 @@
+import { faker } from '@faker-js/faker'
 import { Prisma, PrismaClient } from '@prisma/client'
-
 export default class User {
     public readonly prismaUser: PrismaClient['user'] = new PrismaClient().user
 
@@ -30,5 +30,16 @@ export default class User {
                 password: data.password,
             },
         })
+    }
+
+    static fake(data: object = {}) {
+        return {
+            id: faker.number.int(),
+            email: faker.internet.email(),
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            password: faker.internet.password(),
+            ...data,
+        }
     }
 }

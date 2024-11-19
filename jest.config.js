@@ -4,4 +4,6 @@ export default {
   transform: {
     "^.+.tsx?$": ["ts-jest",{}],
   },
+  setupFilesAfterEnv: ['<rootDir>/src/tests/mocks/prismaMock.ts'],
+  detectOpenHandles: true
 };

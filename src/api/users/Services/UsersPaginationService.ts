@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client'
+import User from '../../../Models/User'
 import prisma from '../../../prisma'
 import UsersPaginationQueryDTO from '../DTOs/UsersPaginationDTO'
 
@@ -17,12 +18,7 @@ export default class UsersPaginationService {
     public async paginate(query: UsersPaginationQueryDTO) {
         const users = prisma.user
             .paginate({
-                select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                },
+                select: User.SELECT_READABLE,
                 where: this.getUserWhereInput(query),
                 orderBy: query.orderBy,
             })

@@ -1,34 +1,34 @@
 import { faker } from '@faker-js/faker'
-import { Prisma, PrismaClient } from '@prisma/client'
-export default class User {
-    public readonly prismaUser: PrismaClient['user'] = new PrismaClient().user
+import { Prisma } from '@prisma/client'
+import prisma from '../prisma'
 
-    async findById(id: number) {
-        return this.prismaUser.findUnique({
-            select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-            },
+export default class User {
+    static readonly SELECT_READABLE = {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+    }
+
+    static async findById(id: number) {
+        return prisma.user.findUnique({
+            select: User.SELECT_READABLE,
             where: { id },
         })
     }
 
-    async create(data: Prisma.UserCreateInput) {
-        return await this.prismaUser.create({
-            select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-            },
-            data: {
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                password: data.password,
-            },
+    static async updateById(id: number, data: Prisma.UserUpdateInput) {
+        return prisma.user.update({
+            select: User.SELECT_READABLE,
+            where: { id },
+            data,
+        })
+    }
+
+    static async create(data: Prisma.UserCreateInput) {
+        return await prisma.user.create({
+            select: User.SELECT_READABLE,
+            data,
         })
     }
 

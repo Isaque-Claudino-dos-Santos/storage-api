@@ -1,17 +1,17 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import User from '../../Models/User'
+import PaginationResource from '../Global/Resources/PaginatinoResource'
 import CreateUserDTO from './DTOs/CreateUserDTO'
 import UpdateUserDTO from './DTOs/UpdateUserDTO'
 import UsersPaginationDTO from './DTOs/UsersPaginationDTO'
+import UsersPaginationResource from './Resources/UsersPaginationResource'
 import UsersPaginationService from './Services/UsersPaginationService'
 import CreateUserValidations from './Validations/CreateUserValidations'
 import UpdateUserValidations from './Validations/UpdateUserValidations'
 import UsersPaginationValidations from './Validations/UsersPaginationValidations'
 
 export default class UserController {
-    private readonly user = new User()
-
     getUsersPagination = async (request: Request, response: Response) => {
         await new UsersPaginationValidations().validate(request)
         const query = new UsersPaginationDTO(request)
@@ -20,8 +20,8 @@ export default class UserController {
 
         response.json({
             success: true,
-            data: pagination[0],
-            pagination: pagination[1],
+            data: new UsersPaginationResource(pagination[0]).resolve(),
+            pagination: new PaginationResource(pagination[1]).resolve(),
         })
     }
 
@@ -36,7 +36,7 @@ export default class UserController {
             return
         }
 
-        const user = await this.user.findById(id)
+        const user = await User.findById(id)
 
         response.json({
             success: true,
@@ -48,7 +48,7 @@ export default class UserController {
         await new CreateUserValidations().validate(request)
         const dto = new CreateUserDTO(request)
 
-        const user = await this.user.create(dto)
+        const user = await User.create(dto)
 
         response.status(201).json({
             success: true,
@@ -61,21 +61,7 @@ export default class UserController {
         const dto = new UpdateUserDTO(request)
         const id = Number(request.params.id)
 
-        const updatedUser = await this.user.prismaUser.update({
-            data: {
-                firstName: dto.firstName,
-                lastName: dto.lastName,
-                email: dto.email,
-                password: dto.password,
-            },
-            select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-            },
-            where: { id },
-        })
+        const updatedUser = await User.updateById(id, dto)
 
         response.json({
             success: true,

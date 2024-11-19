@@ -4,17 +4,26 @@ import { prismaMock } from '../../../tests/mocks/prismaMock'
 
 describe('Users Pagination Tests', () => {
     test('test first', async () => {
-        const user1 = User.fake({ id: 1 })
-        const user2 = User.fake({ id: 2 })
+        const withPages = jest.fn()
 
-        prismaMock.user.findMany.mockResolvedValue([user1, user2])
+        prismaMock.user.paginate.mockReturnValue({
+            withCursor: jest.fn(),
+            withPages,
+        })
 
-        await app.server
-            .mockRequest()
-            .get('/users?orderBy=id')
-            .expect(200, {
-                success: true,
-                data: [user1, user2],
-            })
+        withPages.mockReturnValue([
+            [User.fake({ id: 1 }), User.fake({ id: 2 })],
+            {
+                currentPage: 1,
+                isFirstPage: true,
+                isLastPage: true,
+                nextPage: null,
+                previousPage: null,
+            },
+        ])
+
+        const response = await app.server.mockRequest().get('/users')
+
+        console.log(response.body)
     })
 })

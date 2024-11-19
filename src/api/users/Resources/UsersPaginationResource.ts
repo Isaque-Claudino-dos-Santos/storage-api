@@ -14,7 +14,7 @@ export default class UsersPaginationResource extends BaseResource<ResourceData> 
                 id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.lastName,
+                email: user.email,
             }
         })
     }

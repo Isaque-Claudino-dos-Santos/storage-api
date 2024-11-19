@@ -4,7 +4,7 @@ import prisma from '../../../prisma'
 import UsersPaginationQueryDTO from '../DTOs/UsersPaginationDTO'
 
 export default class UsersPaginationService {
-    private getUserWhereInput(query: UsersPaginationQueryDTO) {
+    private getUsersPaginationWhereStatement(query: UsersPaginationQueryDTO) {
         const { userIds } = query
         const where: Prisma.UserWhereInput = {}
 
@@ -19,7 +19,7 @@ export default class UsersPaginationService {
         const users = prisma.user
             .paginate({
                 select: User.SELECT_READABLE,
-                where: this.getUserWhereInput(query),
+                where: this.getUsersPaginationWhereStatement(query),
                 orderBy: query.orderBy,
             })
             .withPages({

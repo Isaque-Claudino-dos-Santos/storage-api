@@ -38,9 +38,24 @@ export default class UserController {
 
         const user = await User.findById(id)
 
+        if (!user) {
+            response.status(404).json({
+                success: false,
+                data: {
+                    message: 'User not found',
+                },
+            })
+            return
+        }
+
         response.json({
             success: true,
-            data: user,
+            data: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+            },
         })
     }
 
@@ -52,7 +67,12 @@ export default class UserController {
 
         response.status(201).json({
             success: true,
-            data: user,
+            data: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+            },
         })
     }
 
@@ -61,11 +81,16 @@ export default class UserController {
         const dto = new UpdateUserDTO(request)
         const id = Number(request.params.id)
 
-        const updatedUser = await User.updateById(id, dto)
+        const user = await User.updateById(id, dto)
 
         response.json({
             success: true,
-            data: updatedUser,
+            data: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+            },
         })
     }
 }

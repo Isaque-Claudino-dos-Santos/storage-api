@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import { Route } from '../../decorators/router-decorators'
+import Api from '../../Decorators/Router'
 import User from '../../Models/User'
 import BaseController from '../Bases/BaseController'
 import PaginationResource from '../Global/Resources/PaginatinoResource'
@@ -15,8 +15,8 @@ import UpdateUserValidations from './Validations/UpdateUserValidations'
 import UsersPaginationValidations from './Validations/UsersPaginationValidations'
 
 export default class UserController extends BaseController {
-    @Route('get', '/users', UsersPaginationValidations)
-    getUsersPagination = async (request: Request, response: Response) => {
+    @Api.Get('/users', UsersPaginationValidations)
+    async getUsersPagination(request: Request, response: Response) {
         const query = new UsersPaginationDTO(request)
         const service = new UsersPaginationService()
         const pagination = await service.paginate(query)
@@ -28,8 +28,8 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Route('get', '/users/:id', QueryIdValidation)
-    getUserById = async (request: Request, response: Response) => {
+    @Api.Get('/users/:id', QueryIdValidation)
+    async getUserById(request: Request, response: Response) {
         const id = Number(request.params.id)
 
         if (!id) {
@@ -63,8 +63,8 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Route('post', '/users', CreateUserValidations)
-    createUser = async (request: Request, response: Response) => {
+    @Api.Post('/users', CreateUserValidations)
+    async createUser(request: Request, response: Response) {
         const dto = new CreateUserDTO(request)
 
         const user = await User.create(dto)
@@ -80,8 +80,8 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Route('post', '/users/:id', UpdateUserValidations)
-    updateUser = async (request: Request, response: Response) => {
+    @Api.Post('/users/:id', UpdateUserValidations)
+    async updateUser(request: Request, response: Response) {
         const dto = new UpdateUserDTO(request)
         const id = Number(request.params.id)
 

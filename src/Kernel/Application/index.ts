@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client'
 import BaseController from '../../api/Bases/BaseController'
+import BaseErrorHandler from '../../api/Bases/BaseErrorHandler'
 import BaseServer from '../Server/Bases/BaseServer'
 import HttpServer from '../Server/HttpServer'
 import ApplicationConfig from './ApplicationConfig'
@@ -7,22 +7,18 @@ import ApplicationConfig from './ApplicationConfig'
 export default class Application {
     public readonly config: ApplicationConfig = new ApplicationConfig()
     public readonly server: BaseServer = new HttpServer()
-    public readonly prisma: PrismaClient = new PrismaClient()
-    private readonly controllers: BaseController[] = []
 
     withController(...controller: (typeof BaseController)[]): this {
-        controller.forEach((c) => this.controllers.push(new c()))
+        this.server.addController(...controller)
         return this
     }
 
-    private buildControllers(): void {
-        this.controllers.forEach((controller) => {
-            this.server.setRouters(controller.router)
-        })
+    withErrorHandler(...handler: (typeof BaseErrorHandler)[]): this {
+        this.server.addErrorsHandlers(...handler)
+        return this
     }
 
     initialize() {
-        this.buildControllers()
         this.server.start()
     }
 }

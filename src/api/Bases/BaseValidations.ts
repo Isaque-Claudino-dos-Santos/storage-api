@@ -13,7 +13,7 @@ export default abstract class BaseValidations {
                 extendedValidationsClass,
                 []
             )
-            validations.concat(extendedValidations.validate())
+            validations.push(...extendedValidations.validate())
         })
 
         return validations

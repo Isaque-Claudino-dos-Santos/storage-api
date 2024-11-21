@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import Api from '../../Decorators/Router'
+import Api from '../../Decorators/Api'
 import User from '../../Models/User'
 import BaseController from '../Bases/BaseController'
 import PaginationResource from '../Global/Resources/PaginatinoResource'

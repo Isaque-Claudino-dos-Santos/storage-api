@@ -24,7 +24,7 @@
                 "afterDeclarations": true,
                 "exclude": ["**/node_modules/**"]
             }
-        ]
+        ],
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_module"],

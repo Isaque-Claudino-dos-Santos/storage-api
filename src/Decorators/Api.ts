@@ -1,4 +1,6 @@
+import { ValidationChain } from 'express-validator'
 import BaseController from '../api/Bases/BaseController'
+import BaseErrorHandler from '../api/Bases/BaseErrorHandler'
 import BaseMiddleware from '../api/Bases/BaseMiddleware'
 import BaseValidations from '../api/Bases/BaseValidations'
 
@@ -11,9 +13,9 @@ export default class Api {
     private static baseRoute(
         method: HttpMethods,
         uri: string,
-        ...middleware: Middlewares
+        ...handlers: Middlewares
     ) {
-        return function (target: unknown, context: DecoratorContext) {
+        return function (_: unknown, context: DecoratorContext) {
             context.addInitializer(function () {
                 const methodName = context.name
 
@@ -28,18 +30,47 @@ export default class Api {
                 const controller = this as BaseController
                 const controllerHandler = Reflect.get(controller, methodName)
 
-                const handlers = middleware.flatMap((middlewareClass) => {
-                    const middleware = Reflect.construct(middlewareClass, [])
+                const validations: ValidationChain[] = []
+                const middlewares: BaseMiddleware['handle'][] = []
+                const errors: BaseErrorHandler['handle'][] = []
 
-                    if (middleware instanceof BaseValidations) {
-                        return middleware.handler()
+                handlers.forEach((handlerClass) => {
+                    const handler = Reflect.construct(handlerClass, [])
+
+                    if (handler instanceof BaseValidations) {
+                        validations.push(...handler.handler())
                     }
 
-                    return middleware.handle
-                })
+                    if (handler instanceof BaseMiddleware) {
+                        middlewares.push(handler.handle)
+                    }
 
-                controller.router[method](uri, handlers, controllerHandler)
+                    if (handler instanceof BaseErrorHandler) {
+                        errors.push(handler.handle)
+                    }
+                })
+                
+                const route = controller.router[method](
+                    uri,
+                    middlewares,
+                    validations,
+                    controllerHandler
+                )
+
+                if (errors.length) {
+                    route.use(errors)
+                }
             })
+        }
+    }
+
+    static ErrorHandler(...handler: (typeof BaseErrorHandler)[]) {
+        return function (target: typeof BaseController) {
+            target.errorsHandlers.push(
+                ...handler.map(
+                    (handlerClass) => Reflect.construct(handlerClass, []).handle
+                )
+            )
         }
     }
 

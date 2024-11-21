@@ -11,7 +11,7 @@ export default class HttpServer extends BaseServer {
     private readonly config: ServerConfig = new ServerConfig()
     private routers: Router[] = []
 
-    setRouters(routers: Router[]) {
+    setRouters(...routers: Router[]) {
         this.routers = routers
     }
 
@@ -19,7 +19,7 @@ export default class HttpServer extends BaseServer {
         this.app.use(express.json())
 
         this.routers.forEach((router) => this.app.use(router))
-        
+
         if (Env.NODE_ENV === 'test') return
 
         this.app.listen(Env.SERVER_PORT, Env.SERVER_HOST, () => {

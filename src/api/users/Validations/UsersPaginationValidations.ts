@@ -1,27 +1,23 @@
-import { Request } from 'express'
-import { query, validationResult } from 'express-validator'
+import { query, ValidationChain } from 'express-validator'
 import BaseValidations from '../../Bases/BaseValidations'
 
 export default class UsersPaginationValidations extends BaseValidations {
-    async validate(request: Request) {
-        await query('limit').toInt().default(30).run(request)
+    validate(): ValidationChain[] {
+        return [
+            query('limit').toInt().default(30),
 
-        await query('user_ids')
-            .customSanitizer((value) => value?.split(',') ?? [])
-            .toInt()
-            .customSanitizer((value) => value?.filter(Boolean) ?? [])
-            .default([])
-            .run(request)
+            query('user_ids')
+                .customSanitizer((value) => value?.split(',') ?? [])
+                .toInt()
+                .customSanitizer((value) => value?.filter(Boolean) ?? [])
+                .default([]),
 
-        await query('order_by')
-            .customSanitizer((value) => (value === 'desc' ? 'desc' : 'asc'))
-            .default('asc')
-            .run(request)
+            query('order_by')
+                .customSanitizer((value) => (value === 'desc' ? 'desc' : 'asc'))
+                .default('asc'),
 
-        await query('order_by_column').default('id').run(request)
-
-        await query('page').toInt().default(1).run(request)
-
-        return validationResult(request)
+            query('order_by_column').default('id'),
+            query('page').toInt().default(1),
+        ]
     }
 }

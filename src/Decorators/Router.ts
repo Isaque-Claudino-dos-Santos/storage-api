@@ -3,13 +3,15 @@ import BaseMiddleware from '../api/Bases/BaseMiddleware'
 import BaseValidations from '../api/Bases/BaseValidations'
 
 type HttpMethods = 'get' | 'post' | 'delete' | 'put' | 'patch'
+type Contructor<T> = new () => T
+type Middleware = Contructor<BaseMiddleware> | Contructor<BaseValidations>
+type Middlewares = Middleware[]
 
 export default class Api {
     private static baseRoute(
         method: HttpMethods,
         uri: string,
-        validationClass?: new () => BaseValidations,
-        ...middleware: BaseMiddleware[]
+        ...middleware: Middlewares
     ) {
         return function (target: unknown, context: DecoratorContext) {
             context.addInitializer(function () {
@@ -24,59 +26,40 @@ export default class Api {
                 }
 
                 const controller = this as BaseController
-                const handler = Reflect.get(controller, methodName)
+                const controllerHandler = Reflect.get(controller, methodName)
 
-                const validation =
-                    validationClass && Reflect.construct(validationClass, [])
-                const validations = validation ? validation.handler() : []
+                const handlers = middleware.flatMap((middlewareClass) => {
+                    const middleware = Reflect.construct(middlewareClass, [])
 
-                controller.router[method](
-                    uri,
-                    validations,
-                    handler,
-                    middleware.map((middleware) => middleware.handle)
-                )
+                    if (middleware instanceof BaseValidations) {
+                        return middleware.handler()
+                    }
+
+                    return middleware.handle
+                })
+
+                controller.router[method](uri, handlers, controllerHandler)
             })
         }
     }
 
-    static Get(
-        uri: string,
-        validationClass?: new () => BaseValidations,
-        ...middleware: BaseMiddleware[]
-    ) {
-        return Api.baseRoute('get', uri, validationClass, ...middleware)
+    static Get(uri: string, ...middleware: Middlewares) {
+        return Api.baseRoute('get', uri, ...middleware)
     }
 
-    static Post(
-        uri: string,
-        validationClass?: new () => BaseValidations,
-        ...middleware: BaseMiddleware[]
-    ) {
-        return Api.baseRoute('post', uri, validationClass, ...middleware)
+    static Post(uri: string, ...middleware: Middlewares) {
+        return Api.baseRoute('post', uri, ...middleware)
     }
 
-    static Put(
-        uri: string,
-        validationClass?: new () => BaseValidations,
-        ...middleware: BaseMiddleware[]
-    ) {
-        return Api.baseRoute('put', uri, validationClass, ...middleware)
+    static Put(uri: string, ...middleware: Middlewares) {
+        return Api.baseRoute('put', uri, ...middleware)
     }
 
-    static Patch(
-        uri: string,
-        validationClass?: new () => BaseValidations,
-        ...middleware: BaseMiddleware[]
-    ) {
-        return Api.baseRoute('patch', uri, validationClass, ...middleware)
+    static Patch(uri: string, ...middleware: Middlewares) {
+        return Api.baseRoute('patch', uri, ...middleware)
     }
 
-    static Delete(
-        uri: string,
-        validationClass?: new () => BaseValidations,
-        ...middleware: BaseMiddleware[]
-    ) {
-        return Api.baseRoute('delete', uri, validationClass, ...middleware)
+    static Delete(uri: string, ...middleware: Middlewares) {
+        return Api.baseRoute('delete', uri, ...middleware)
     }
 }

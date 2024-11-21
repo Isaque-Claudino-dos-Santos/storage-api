@@ -1,4 +1,5 @@
-import { ValidationChain } from 'express-validator'
+import { Request } from 'express'
+import { ValidationChain, validationResult } from 'express-validator'
 import BaseController from '../api/Bases/BaseController'
 import BaseErrorHandler from '../api/Bases/BaseErrorHandler'
 import BaseMiddleware from '../api/Bases/BaseMiddleware'
@@ -49,11 +50,14 @@ export default class Api {
                         errors.push(handler.handle)
                     }
                 })
-                
+
                 const route = controller.router[method](
                     uri,
                     middlewares,
                     validations,
+                    (request: Request) => {
+                        validationResult(request).throw()
+                    },
                     controllerHandler
                 )
 

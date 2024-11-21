@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { ValidationChain, validationResult } from 'express-validator'
 import BaseController from '../api/Bases/BaseController'
 import BaseErrorHandler from '../api/Bases/BaseErrorHandler'
@@ -55,8 +55,14 @@ export default class Api {
                     uri,
                     middlewares,
                     validations,
-                    (request: Request) => {
-                        validationResult(request).throw()
+                    (request: Request, _: Response, next: NextFunction) => {
+                        const validate = validationResult(request)
+
+                        if (validate.isEmpty()) {
+                            next()
+                        }
+                        
+                        validate.throw()
                     },
                     controllerHandler
                 )

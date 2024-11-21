@@ -21,14 +21,24 @@ export default class User {
         return prisma.user.update({
             select: User.SELECT_READABLE,
             where: { id },
-            data,
+            data: {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                password: data.password,
+            },
         })
     }
 
     static async create(data: Prisma.UserCreateInput) {
         return await prisma.user.create({
             select: User.SELECT_READABLE,
-            data,
+            data: {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                password: data.password,
+            },
         })
     }
 

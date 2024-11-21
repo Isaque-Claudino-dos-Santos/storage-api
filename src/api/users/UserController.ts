@@ -1,7 +1,10 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
+import { Route } from '../../decorators/router-decorators'
 import User from '../../Models/User'
+import BaseController from '../Bases/BaseController'
 import PaginationResource from '../Global/Resources/PaginatinoResource'
+import QueryIdValidation from '../Global/Validations/QueryIdValidation'
 import CreateUserDTO from './DTOs/CreateUserDTO'
 import UpdateUserDTO from './DTOs/UpdateUserDTO'
 import UsersPaginationDTO from './DTOs/UsersPaginationDTO'
@@ -11,9 +14,9 @@ import CreateUserValidations from './Validations/CreateUserValidations'
 import UpdateUserValidations from './Validations/UpdateUserValidations'
 import UsersPaginationValidations from './Validations/UsersPaginationValidations'
 
-export default class UserController {
+export default class UserController extends BaseController {
+    @Route('get', '/users', UsersPaginationValidations)
     getUsersPagination = async (request: Request, response: Response) => {
-        await new UsersPaginationValidations().validate(request)
         const query = new UsersPaginationDTO(request)
         const service = new UsersPaginationService()
         const pagination = await service.paginate(query)
@@ -25,6 +28,7 @@ export default class UserController {
         })
     }
 
+    @Route('get', '/users/:id', QueryIdValidation)
     getUserById = async (request: Request, response: Response) => {
         const id = Number(request.params.id)
 
@@ -59,8 +63,8 @@ export default class UserController {
         })
     }
 
+    @Route('post', '/users', CreateUserValidations)
     createUser = async (request: Request, response: Response) => {
-        await new CreateUserValidations().validate(request)
         const dto = new CreateUserDTO(request)
 
         const user = await User.create(dto)
@@ -76,8 +80,8 @@ export default class UserController {
         })
     }
 
+    @Route('post', '/users/:id', UpdateUserValidations)
     updateUser = async (request: Request, response: Response) => {
-        await new UpdateUserValidations().validate(request)
         const dto = new UpdateUserDTO(request)
         const id = Number(request.params.id)
 

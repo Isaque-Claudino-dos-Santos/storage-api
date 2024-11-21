@@ -1,19 +1,14 @@
-import { Request } from 'express'
-import {
-    body,
-    Result,
-    ValidationError,
-    validationResult,
-} from 'express-validator'
+import { body, query, ValidationChain } from 'express-validator'
 import BaseValidations from '../../Bases/BaseValidations'
 
 export default class UpdateUserValidations extends BaseValidations {
-    public async validate(request: Request): Promise<Result<ValidationError>> {
-        await body('firstName').isString().toLowerCase().run(request)
-        await body('lastName').isString().toLowerCase().run(request)
-        await body('email').isEmail().run(request)
-        await body('password').isString().run(request)
-
-        return validationResult(request)
+    validate(): ValidationChain[] {
+        return [
+            body('firstName').isString().toLowerCase(),
+            body('lastName').isString().toLowerCase(),
+            body('email').isEmail(),
+            body('password').isString(),
+            query('id').isInt(),
+        ]
     }
 }

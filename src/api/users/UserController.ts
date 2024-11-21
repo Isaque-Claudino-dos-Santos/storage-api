@@ -80,7 +80,7 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Api.Post('/users/:id', UpdateUserValidations)
+    @Api.Put('/users/:id', UpdateUserValidations)
     async updateUser(request: Request, response: Response) {
         const dto = new UpdateUserDTO(request)
         const id = Number(request.params.id)

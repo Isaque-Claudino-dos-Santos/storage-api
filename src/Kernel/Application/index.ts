@@ -6,21 +6,13 @@ import ApplicationConfig from './ApplicationConfig'
 export default class Application {
     public readonly config: ApplicationConfig = new ApplicationConfig()
     public readonly server: BaseServer = new HttpServer()
-    private readonly controllers: BaseController[] = []
 
     withController(...controller: (typeof BaseController)[]): this {
-        controller.forEach((c) => this.controllers.push(new c()))
+        this.server.addController(...controller)
         return this
     }
 
-    private buildControllers(): void {
-        this.controllers.forEach((controller) => {
-            this.server.setRouters(controller.router)
-        })
-    }
-
     initialize() {
-        this.buildControllers()
         this.server.start()
     }
 }

@@ -6,11 +6,7 @@ export default class UsersPaginationValidations extends BaseValidations {
         return [
             query('limit').toInt().default(30),
 
-            query('user_ids')
-                .customSanitizer((value) => value?.split(',') ?? [])
-                .toInt()
-                .customSanitizer((value) => value?.filter(Boolean) ?? [])
-                .default([]),
+            query('user_ids').toInt().default([]),
 
             query('order_by')
                 .customSanitizer((value) => (value === 'desc' ? 'desc' : 'asc'))

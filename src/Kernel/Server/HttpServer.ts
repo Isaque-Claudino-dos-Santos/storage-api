@@ -1,10 +1,11 @@
 import { log } from 'console'
-import express, { Express, RequestHandler } from 'express'
+import express, { Express } from 'express'
 import supertest from 'supertest'
 import TestAgent from 'supertest/lib/agent'
 import BaseController from '../../api/Bases/BaseController'
 import BaseErrorHandler from '../../api/Bases/BaseErrorHandler'
 import Env from '../../constants/Env'
+import { EndPointOptions } from '../Decorators/server-decorator'
 import BaseServer from './Bases/BaseServer'
 import ServerConfig from './ServerConfig'
 
@@ -21,20 +22,28 @@ export default class HttpServer extends BaseServer {
                 return error.handle
             })
 
-            this.use(...handlers)
+            this.app.use(handlers)
         }
     }
-    
+
     private buildRouterByControllers() {
         this.controllers.forEach((controllerClass) => {
-            const controller = Reflect.construct(controllerClass, [])
-            const { router } = controller
+            Reflect.construct(controllerClass, [])
 
-            if (controllerClass.errorsHandlers.length) {
-                router.use(controllerClass.errorsHandlers)
-            }
+            const metadataKey = Reflect.ownKeys(controllerClass).filter(
+                (key) =>
+                    typeof key === 'symbol' &&
+                    key.description === 'Symbol.metadata'
+            )[0]
 
-            this.use(router)
+            const metadata = Reflect.get(controllerClass, metadataKey)
+            const router = Reflect.get(metadata, 'global/router')
+            const options = Reflect.get(
+                metadata,
+                'global/options'
+            ) as EndPointOptions
+            
+            this.app.use(options.prefix ?? '/', router)
         })
     }
 
@@ -44,10 +53,6 @@ export default class HttpServer extends BaseServer {
 
     addErrorsHandlers(...handlers: (typeof BaseErrorHandler)[]): void {
         this.errorsHandlers.push(...handlers)
-    }
-
-    use(...handler: RequestHandler[]) {
-        this.app.use(handler)
     }
 
     start() {
@@ -62,7 +67,7 @@ export default class HttpServer extends BaseServer {
                 return error.handle
             })
 
-            this.use(...handlers)
+            this.app.use(handlers)
         }
 
         if (Env.NODE_ENV === 'test') return

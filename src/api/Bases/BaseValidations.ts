@@ -5,7 +5,7 @@ export default abstract class BaseValidations {
 
     protected abstract validate(): ValidationChain[]
 
-    handler() {
+    handle() {
         const validations = this.validate()
 
         this.extends.forEach((extendedValidationsClass) => {

@@ -4,7 +4,7 @@ import Api from '../../Decorators/Api'
 import User from '../../Models/User'
 import BaseController from '../Bases/BaseController'
 import PaginationResource from '../Global/Resources/PaginatinoResource'
-import QueryIdValidation from '../Global/Validations/QueryIdValidation'
+import ParamIdValidation from '../Global/Validations/ParamIdValidation'
 import CreateUserDTO from './DTOs/CreateUserDTO'
 import UpdateUserDTO from './DTOs/UpdateUserDTO'
 import UsersPaginationDTO from './DTOs/UsersPaginationDTO'
@@ -28,7 +28,7 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Api.Get('/users/:id', QueryIdValidation)
+    @Api.Get('/users/:id', ParamIdValidation)
     async getUserById(request: Request, response: Response) {
         const id = Number(request.params.id)
 

@@ -5,6 +5,7 @@ export default {
     transform: {
         '^.+.tsx?$': ['ts-jest', {}],
     },
+    setupFiles: ['<rootDir>/src/tests/setup.ts'],
     setupFilesAfterEnv: [
         '<rootDir>/src/tests/mocks/prismaMock.ts',
         'jest-extended/all',

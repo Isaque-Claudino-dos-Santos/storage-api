@@ -1,9 +1,9 @@
 import { body, ValidationChain } from 'express-validator'
 import BaseValidations from '../../Bases/BaseValidations'
-import QueryIdValidation from '../../Global/Validations/QueryIdValidation'
+import ParamIdValidation from '../../Global/Validations/ParamIdValidation'
 
 export default class UpdateUserValidations extends BaseValidations {
-    protected extends = [QueryIdValidation]
+    protected extends = [ParamIdValidation]
 
     validate(): ValidationChain[] {
         return [

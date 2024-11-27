@@ -1,10 +1,15 @@
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
-import Api from '../../Decorators/Api'
+import {
+    EndPoint,
+    Get,
+    Post,
+    Put,
+    Validation,
+} from '../../Kernel/Decorators/server-decorator'
 import User from '../../Models/User'
-import BaseController from '../Bases/BaseController'
 import PaginationResource from '../Global/Resources/PaginatinoResource'
-import QueryIdValidation from '../Global/Validations/QueryIdValidation'
+import ParamIdValidation from '../Global/Validations/ParamIdValidation'
 import CreateUserDTO from './DTOs/CreateUserDTO'
 import UpdateUserDTO from './DTOs/UpdateUserDTO'
 import UsersPaginationDTO from './DTOs/UsersPaginationDTO'
@@ -14,8 +19,10 @@ import CreateUserValidations from './Validations/CreateUserValidations'
 import UpdateUserValidations from './Validations/UpdateUserValidations'
 import UsersPaginationValidations from './Validations/UsersPaginationValidations'
 
-export default class UserController extends BaseController {
-    @Api.Get('/users', UsersPaginationValidations)
+@EndPoint({ prefix: '/users' })
+export default class UserController {
+    @Validation(UsersPaginationValidations)
+    @Get('/')
     async getUsersPagination(request: Request, response: Response) {
         const query = new UsersPaginationDTO(request)
         const service = new UsersPaginationService()
@@ -28,7 +35,8 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Api.Get('/users/:id', QueryIdValidation)
+    @Validation(ParamIdValidation)
+    @Get('/:id')
     async getUserById(request: Request, response: Response) {
         const id = Number(request.params.id)
 
@@ -63,7 +71,8 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Api.Post('/users', CreateUserValidations)
+    @Validation(CreateUserValidations)
+    @Post('/')
     async createUser(request: Request, response: Response) {
         const dto = new CreateUserDTO(request)
 
@@ -80,7 +89,8 @@ export default class UserController extends BaseController {
         })
     }
 
-    @Api.Put('/users/:id', UpdateUserValidations)
+    @Validation(UpdateUserValidations)
+    @Put('/:id')
     async updateUser(request: Request, response: Response) {
         const dto = new UpdateUserDTO(request)
         const id = Number(request.params.id)

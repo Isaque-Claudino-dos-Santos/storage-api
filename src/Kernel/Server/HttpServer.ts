@@ -1,10 +1,11 @@
 import { log } from 'console'
-import express, { Express, RequestHandler } from 'express'
+import express, { Express } from 'express'
 import supertest from 'supertest'
 import TestAgent from 'supertest/lib/agent'
 import BaseController from '../../api/Bases/BaseController'
 import BaseErrorHandler from '../../api/Bases/BaseErrorHandler'
 import Env from '../../constants/Env'
+import Collection from '../../Helpers/Collection'
 import BaseServer from './Bases/BaseServer'
 import ServerConfig from './ServerConfig'
 
@@ -16,25 +17,29 @@ export default class HttpServer extends BaseServer {
 
     private buildErrorsHandlersInRouters() {
         if (this.errorsHandlers.length) {
-            const handlers = this.errorsHandlers.map((errorClass) => {
-                const error = Reflect.construct(errorClass, [])
-                return error.handle
-            })
+            const handlers = Collection.create(this.errorsHandlers)
+                .construct()
+                .columns('handle')
+                .get()
 
-            this.use(...handlers)
+            this.app.use(handlers)
         }
     }
-    
+
     private buildRouterByControllers() {
-        this.controllers.forEach((controllerClass) => {
-            const controller = Reflect.construct(controllerClass, [])
-            const { router } = controller
+        Collection.create(this.controllers).forEach((controllerClass) => {
+            Reflect.construct(controllerClass, [])
+            const metadataKey = Reflect.ownKeys(controllerClass).filter(
+                (key) =>
+                    typeof key === 'symbol' &&
+                    key.description === 'Symbol.metadata'
+            )[0]
 
-            if (controllerClass.errorsHandlers.length) {
-                router.use(controllerClass.errorsHandlers)
-            }
+            const metadata = Reflect.get(controllerClass, metadataKey)
+            const router = Reflect.get(metadata, 'global:router')
+            const options = Reflect.get(metadata, 'global:options')
 
-            this.use(router)
+            this.app.use(options.prefix ?? '/', router)
         })
     }
 
@@ -46,24 +51,11 @@ export default class HttpServer extends BaseServer {
         this.errorsHandlers.push(...handlers)
     }
 
-    use(...handler: RequestHandler[]) {
-        this.app.use(handler)
-    }
-
     start() {
         this.app.use(express.json())
 
         this.buildRouterByControllers()
         this.buildErrorsHandlersInRouters()
-
-        if (this.errorsHandlers.length) {
-            const handlers = this.errorsHandlers.map((errorClass) => {
-                const error = Reflect.construct(errorClass, [])
-                return error.handle
-            })
-
-            this.use(...handlers)
-        }
 
         if (Env.NODE_ENV === 'test') return
 

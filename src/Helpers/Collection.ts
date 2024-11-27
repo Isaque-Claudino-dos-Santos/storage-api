@@ -23,6 +23,11 @@ export default class Collection<D> {
         return new Collection(newData)
     }
 
+    map<T>(callback: (value: D, i: number, arr: D[]) => T) {
+        const newData = this.data.map(callback)
+        return new Collection(newData)
+    }
+
     get() {
         return this.data
     }

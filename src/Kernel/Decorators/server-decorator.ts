@@ -70,7 +70,9 @@ export function Validation(...validationClass: (typeof BaseValidations)[]) {
 
         const newValidations = Collection.create(validationClass)
             .construct()
-            .columns('handle')
+            .map((validation) => {
+                return validation.handle()
+            })
             .get()
 
         metadata.append({

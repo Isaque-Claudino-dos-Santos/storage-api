@@ -31,7 +31,15 @@ export type EndPointOptions = {
 export function EndPoint(options: EndPointOptions) {
     return function (_: unknown, context: DecoratorContext) {
         context.addInitializer(function () {
+            if (!context.metadata) {
+                Reflect.defineProperty(context, 'metadata', {
+                    value: {},
+                })
+            }
+
             if (!context.metadata) return
+
+
             const metadata = new Metadata('global', context.metadata)
 
             const router = Router()
@@ -135,6 +143,7 @@ function createRoute(method: Methods, uri: string) {
             })
 
             const router = globalMetadata.get<Router>({ key: 'router' })
+
 
             router[method](uri, ...middlewares, ...validations, target)
         })

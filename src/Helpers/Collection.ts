@@ -28,6 +28,11 @@ export default class Collection<D> {
         return new Collection(newData)
     }
 
+    forEach(callback: (value: D, i: number, arr: D[]) => void) {
+        this.data.map(callback)
+        return this
+    }
+
     get() {
         return this.data
     }

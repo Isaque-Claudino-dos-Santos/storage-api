@@ -25,7 +25,7 @@ export default class Metadata {
     }
 
     private getTargetKey(key: string) {
-        return `${this.id}/${key}`
+        return `${this.id}:${key}`
     }
 
     set(options: MetadataSetOptions) {
